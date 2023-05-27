@@ -63,6 +63,7 @@ class CommentActivity : AppCompatActivity() {
                         Glide.with(this).load(contentDTO!!.imgUrl)
                             .apply(RequestOptions().centerCrop())
                             .into(binding.contentImg)
+                        binding.contentText.text = contentDTO!!.explain
                     }
                 }
                 if(contentDTO == null){
@@ -128,7 +129,7 @@ class CommentActivity : AppCompatActivity() {
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_edit -> {
-
+                    editContent()
                 }
                 R.id.action_delete -> {
                     deleteContent()
@@ -137,6 +138,13 @@ class CommentActivity : AppCompatActivity() {
             false
         }
         popupMenu.show()
+    }
+
+    fun editContent(){
+        val intent = Intent(this@CommentActivity, EditContentActivity::class.java)
+        intent.putExtra("contentUid", contentUid)
+        startActivity(intent)
+        finish()
     }
 
     fun deleteContent(){
@@ -212,6 +220,8 @@ class CommentActivity : AppCompatActivity() {
                     // 처리할 작업을 추가하세요
                 }
             })
+            holder.itemBinding.commentTimeTextview.text = SimpleDateFormat("MM월 dd일 HH:mm",
+                Locale.getDefault()).format(Date(comment.timestamp!!))
         }
     }
 }
