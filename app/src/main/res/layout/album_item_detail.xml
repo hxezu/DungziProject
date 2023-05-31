@@ -50,7 +50,6 @@
     </LinearLayout>
 
     <ImageView
-        android:src="@drawable/sample"
         android:scaleType="fitCenter"
         android:id="@+id/content_imageview"
         android:layout_width="match_parent"

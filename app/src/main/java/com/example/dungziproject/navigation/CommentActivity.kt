@@ -61,7 +61,7 @@ class CommentActivity : AppCompatActivity() {
                     contentDTO = task.result?.toObject(ContentDTO::class.java)
                     if (contentDTO != null) {
                         Glide.with(this).load(contentDTO!!.imgUrl)
-                            .apply(RequestOptions().centerCrop())
+                            .apply(RequestOptions().fitCenter())
                             .into(binding.contentImg)
                         binding.contentText.text = contentDTO!!.explain
                         binding.likeTextview.text = contentDTO!!.favoriteCount.toString()
@@ -71,6 +71,7 @@ class CommentActivity : AppCompatActivity() {
                 if(contentDTO == null){
                     contentDTO = ContentDTO()
                 }
+
                 FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(contentUid!!)
@@ -106,16 +107,29 @@ class CommentActivity : AppCompatActivity() {
                             binding.editPopup.visibility = View.GONE
                         }
                     }
+
+                FirebaseFirestore.getInstance()
+                    .collection("images")
+                    .document(contentUid!!)
+                    .collection("comments")
+                    .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                        if (querySnapshot != null) {
+                            val count = querySnapshot.size() // Get the count of comments
+                            binding.commentCountTextview.text = count.toString() // Update the comment count TextView
+                        }
+                    }
+
             }
 
 
+
         //Comment
+
         binding.commentRecyclerview.adapter = CommentRecyclerViewAdapter()
         binding.commentRecyclerview.layoutManager = LinearLayoutManager(this)
         binding.sendBtn.setOnClickListener {
             var comment = ContentDTO.Comment()
             comment.userId = FirebaseAuth.getInstance().currentUser?.uid
-
             comment.comment = binding.commentEdittext.text.toString()
             comment.timestamp = System.currentTimeMillis()
 
@@ -208,6 +222,7 @@ class CommentActivity : AppCompatActivity() {
             val comment = comments[position]
 
             customViewHolder.itemBinding.messageTextview.text = comment.comment
+            
             val userRef =
                 FirebaseDatabase.getInstance().getReference("user").child(comment.userId ?: "")
             userRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -225,4 +240,18 @@ class CommentActivity : AppCompatActivity() {
                 Locale.getDefault()).format(Date(comment.timestamp!!))
         }
     }
+//            customViewHolder.itemBinding.profileTextview.text = comment.userId
+
+//            FirebaseFirestore.getInstance()
+//                .collection("profileImages")
+//                .document(comment.uid!!)
+//               .get()
+//                .addOnCompleteListener { task ->
+//                    if(task.isSuccessful){
+//                        var url = task.result!!["image"]
+//                        Glide.with(holder.itemView.context).load(url).apply(RequestOptions().circleCrop()).into(customViewHolder.itemBinding.profileImageview)
+//                    }
+//               }
+//        }
+//   }
 }
