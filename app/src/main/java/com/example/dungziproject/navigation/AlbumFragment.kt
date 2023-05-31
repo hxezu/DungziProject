@@ -38,10 +38,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class AlbumFragment :Fragment() {
     var binding: FragmentAlbumBinding?=null
     var firestore : FirebaseFirestore?=null
     var uid :String? = null
+    var flag=true
     private lateinit var auth: FirebaseAuth
     var contentDTOs : ArrayList<ContentDTO> = arrayListOf()
     var contentUidList : ArrayList<String> = arrayListOf()
@@ -58,30 +60,26 @@ class AlbumFragment :Fragment() {
         binding!!.albumRecyclerview.adapter = AlbumRecyclerViewAdapter()
         binding!!.albumRecyclerview.layoutManager = LinearLayoutManager(activity)
 
-
         //popup menu
-        binding!!.albumPopup.setOnClickListener {
-            val popupMenu = PopupMenu(context, it)
-            popupMenu.inflate(R.menu.album_popup)
-            popupMenu.setOnMenuItemClickListener { menuItem ->
-                when(menuItem.itemId){
-                    R.id.action_grid -> {
-                        binding!!.albumRecyclerview.adapter = GridFragmentRecyclerViewAdapter()
-                        binding!!.albumRecyclerview.layoutManager = GridLayoutManager(activity,3)
-                    }
-                    R.id.action_linear -> {
-                        binding!!.albumRecyclerview.adapter = AlbumRecyclerViewAdapter()
-                        binding!!.albumRecyclerview.layoutManager = LinearLayoutManager(activity)
-                    }
-                    R.id.action_upload -> {
-                        if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
-                            startActivity(Intent(requireContext(), PostingActivity::class.java))
-                        }
-                    }
-                }
-                false
+        binding!!.layoutBtn.setOnClickListener {
+            if(flag){
+                binding!!.layoutBtn.setImageResource(R.drawable.ic_list)
+                binding!!.albumRecyclerview.adapter = GridFragmentRecyclerViewAdapter()
+                binding!!.albumRecyclerview.layoutManager = GridLayoutManager(activity,3)
+                flag = false
+            }else{
+                binding!!.layoutBtn.setImageResource(R.drawable.ic_grid)
+                binding!!.albumRecyclerview.adapter = AlbumRecyclerViewAdapter()
+                binding!!.albumRecyclerview.layoutManager = LinearLayoutManager(activity)
+                flag = true
             }
-            popupMenu.show()
+
+        }
+
+        binding!!.uploadBtn.setOnClickListener {
+            if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+                startActivity(Intent(requireContext(), PostingActivity::class.java))
+            }
         }
 
         return binding!!.root
@@ -174,6 +172,7 @@ class AlbumFragment :Fragment() {
             }
 
             customViewHolder.itemBinding.contentImageview.setOnClickListener{ v ->
+//            customViewHolder.itemBinding.
                 val intent = Intent(v.context, CommentActivity::class.java)
                 intent.putExtra("contentUid",contentUidList[position])
                 startActivity(intent)
@@ -204,15 +203,15 @@ class AlbumFragment :Fragment() {
         var contentDTOs : ArrayList<ContentDTO> = arrayListOf()
 
         init {
-            firestore?.collection("images")?.addSnapshotListener{querySnapshot, firebaseFirestoreException->
-                if(querySnapshot == null) return@addSnapshotListener
-
-                for(snapshot in querySnapshot.documents){
-                    contentDTOs.add(snapshot.toObject(ContentDTO::class.java)!!)
+            firestore?.collection("images")?.orderBy("timestamp", Query.Direction.DESCENDING)
+                ?.addSnapshotListener { querySnapshot, firebaseFirestoreException->
+                    if(querySnapshot == null) return@addSnapshotListener
+                    contentDTOs.clear()
+                    for(snapshot in querySnapshot.documents){
+                        contentDTOs.add(snapshot.toObject(ContentDTO::class.java)!!)
+                    }
+                    notifyDataSetChanged()
                 }
-
-                notifyDataSetChanged()
-            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -231,17 +230,17 @@ class AlbumFragment :Fragment() {
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            var imageView = (holder as CustomViewHolder).imageView
-            Glide.with(holder.imageView.context).load(contentDTOs[position].imgUrl).apply(
-                RequestOptions().centerCrop()).into(imageView)
+            val imageView = (holder as CustomViewHolder).imageView
+            Glide.with(holder.imageView.context)
+                .load(contentDTOs[position].imgUrl)
+                .apply(RequestOptions().centerCrop())
+                .into(imageView)
 
-            imageView.setOnClickListener{ v ->
+            imageView.setOnClickListener { v ->
                 val intent = Intent(v.context, CommentActivity::class.java)
-                intent.putExtra("contentUid",contentUidList[position])
+                intent.putExtra("contentUid", contentUidList[position])
                 startActivity(intent)
             }
         }
-
     }
-
 }
