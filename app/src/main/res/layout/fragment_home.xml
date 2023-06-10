@@ -7,38 +7,60 @@
     android:orientation="vertical"
     tools:context=".navigation.HomeFragment">
 
-    <LinearLayout
-        android:layout_margin="10dp"
-        android:background="@drawable/round_rec"
-        android:orientation="vertical"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="80dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/logo_chick" />
 
-        <TextView
-            android:layout_margin="10dp"
-            android:paddingTop="10dp"
-            android:textAlignment="center"
-            android:textColor="@color/orange"
-            android:text="오늘 우리가족의 기분은?"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginBottom="10dp"
-            android:id="@+id/emotionRecyclerView"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="80dp" />
-
-    </LinearLayout>
-
-
-
-    <View
-        android:layout_margin="10dp"
-        android:background="@drawable/round_rec"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/round_rec"
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/memo"
+                    android:textColor="@color/orange" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/emotionRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="15dp" />
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_margin="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/round_rec"
+                android:elevation="10dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
