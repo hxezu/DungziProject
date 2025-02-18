@@ -2,6 +2,8 @@
 
 <p align="center">
   <img src="https://github.com/elenachoi26/dungji/assets/87288266/8970d399-4cfb-492c-a236-13456a4a309b" alt="가족 커뮤니티 앱 둥지" width="500">
+</p>
+<p align="center">
   <img src="https://github.com/elenachoi26/dungji/assets/87288266/16b39151-71d4-4ba4-b136-af2b205a4b0c" alt="가족 커뮤니티 앱 둥지" width="500">
 </p>
 
